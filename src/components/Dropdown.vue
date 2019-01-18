@@ -5,10 +5,13 @@
                 v-on:hide="popperHide"
                 v-on:created="popperCreated"
                 trigger="click"
-                :options="popper_options"
+                :options="popperOptions"
         >
-            <div class="popper">
-                <div v-for="(option, index) in options" :key="index" @click="setOption(index)">
+            <div :class="popperClass" >
+                <div v-if="hasDescription" :class="descriptionClass">
+                    {{ description }}
+                </div>
+                <div v-for="(option, index) in options" :key="index" @click="setOption(index)" :class="[optionClass(index), option.value === currentOption.value ? optionActiveClass(index): '']">
                     <svg v-if="optionHasSvgIcon(index) && (optionValueType === 'icon' ||  optionValueType === 'iconName')"
                          :class="optionIconClass(index)"
                          xmlns="http://www.w3.org/2000/svg"
@@ -33,7 +36,7 @@
                 </div>
             </div>
 
-            <button type="button" slot="reference" style="border: none;">
+            <button type="button" slot="reference" :class="currentOptionClass">
                 <svg v-if="currentOptionHasSvgIcon() && (currentOptionValueType === 'icon' ||  currentOptionValueType === 'iconName')"
                      :class="currentOptionIconClass" xmlns="http://www.w3.org/2000/svg"
                      :viewBox="currentOption.iconViewbox">
@@ -64,7 +67,6 @@
 
 <script>
     import Popper from 'vue-popperjs';
-    /*import 'vue-popperjs/dist/css/vue-popper.css';*/
 
     export default {
         name: 'Dropdown',
@@ -105,7 +107,7 @@
                     return ['name', 'icon', 'iconName', 'nameIcon'].indexOf(value) !== -1
                 }
             },
-            popper_options: Object,
+            popperOptions: Object,
             currentOptionIconClass: {
                 type: String,
                 default: "dd_icon dd_float_left"
@@ -113,6 +115,26 @@
             currentOptionValueClass: {
                 type: String,
                 default: "dd_float_left"
+            },
+            currentOptionClass: {
+                type: String,
+                default: "dd_boarder_none"
+            },
+            optionButtonClass: {
+                type: String,
+                default: ""
+            },
+            popperClass: {
+                type: String,
+                default: "popper"
+            },
+            description: {
+                type: String,
+                default: ""
+            },
+            descriptionClass: {
+                type: String,
+                default: ""
             }
         },
         data() {
@@ -123,18 +145,35 @@
             }
         },
         computed: {
-
+            hasDescription: function () {
+                if(this.description === ""){
+                    return false
+                }
+                return true;
+            }
         },
         methods: {
+            optionClass: function (index) {
+                if (this.options[index].hasOwnProperty('optionClass')) {
+                    return this.options[index].optionClass;
+                }
+                return '';
+            },
+            optionActiveClass: function (index) {
+                if (this.options[index].hasOwnProperty('optionActiveClass')) {
+                    return this.options[index].optionActiveClass;
+                }
+                return '';
+            },
             optionIconClass: function (index) {
-                if (this.options[index].hasOwnProperty('iconClass')) {
-                    return this.options[index].iconClass;
+                if (this.options[index].hasOwnProperty('optionIconClass')) {
+                    return this.options[index].optionIconClass;
                 }
                 return 'dd_icon dd_float_left';
             },
             optionValueClass: function (index) {
-                if (this.options[index].hasOwnProperty('valueClass')) {
-                    return this.options[index].valueClass;
+                if (this.options[index].hasOwnProperty('optionValueClass')) {
+                    return this.options[index].optionValueClass;
                 }
                 return 'dd_float_left';
             },
@@ -181,5 +220,8 @@
     .dd_transform-180 {
         -webkit-transform: rotate(180deg);
         transform: rotate(180deg);
+    }
+    .dd_boarder_none {
+        border: none;
     }
 </style>
