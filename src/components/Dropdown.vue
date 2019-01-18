@@ -33,7 +33,7 @@
                 </div>
             </div>
 
-            <button slot="reference" style="border: none;">
+            <button type="button" slot="reference" style="border: none;">
                 <svg v-if="currentOptionHasSvgIcon() && (currentOptionValueType === 'icon' ||  currentOptionValueType === 'iconName')"
                      :class="currentOptionIconClass" xmlns="http://www.w3.org/2000/svg"
                      :viewBox="currentOption.iconViewbox">
